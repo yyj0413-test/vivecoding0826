@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>오늘의 아이들 일정</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Pretendard",
+        "Apple SD Gothic Neo",
+        "Noto Sans KR",
+        sans-serif;
+      background: #f5f6fa;
+      color: #20232b;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1440px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 34px 42px 50px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      font-size: 13px;
+      font-weight: 700;
+      color: #8b91a1;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: -1.2px;
+      line-height: 1.25;
+    }
+
+    .date {
+      color: #858b9a;
+      font-size: 14px;
+      margin-top: 7px;
+    }
+
+    .family-summary {
+      display: flex;
+      gap: 10px;
+    }
+
+    .child-chip {
+      background: #fff;
+      border: 1px solid #e9eaf0;
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 3px 12px rgba(32, 35, 43, 0.03);
+    }
+
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .blue {
+      background: #5d7cf5;
+    }
+
+    .pink {
+      background: #ec7295;
+    }
+
+    /* Main Card */
+    .schedule-card {
+      background: #fff;
+      border: 1px solid #e9eaf0;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(34, 38, 52, 0.06);
+    }
+
+    .schedule-head {
+      height: 82px;
+      display: grid;
+      grid-template-columns: 90px 1fr 1fr 1.25fr;
+      border-bottom: 1px solid #eceef3;
+      background: #fff;
+    }
+
+    .head-cell {
+      display: flex;
+      align-items: center;
+      padding: 0 22px;
+      border-left: 1px solid #f0f1f5;
+    }
+
+    .head-cell:first-child {
+      border-left: none;
+    }
+
+    .head-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .head-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .head-sub {
+      margin-left: 9px;
+      font-size: 11px;
+      color: #a0a5b2;
+      font-weight: 500;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+    }
+
+    .time-row {
+      display: grid;
+      grid-template-columns: 90px 1fr 1fr 1.25fr;
+      min-height: 94px;
+      border-bottom: 1px solid #f0f1f4;
+    }
+
+    .time-row:last-child {
+      border-bottom: none;
+    }
+
+    .time {
+      position: relative;
+      padding: 18px 18px 0 0;
+      text-align: right;
+      color: #a0a5b2;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .time::after {
+      content: "";
+      position: absolute;
+      right: -4px;
+      top: 24px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #d9dce4;
+      z-index: 3;
+    }
+
+    .cell {
+      position: relative;
+      border-left: 1px solid #f0f1f4;
+      padding: 9px 10px;
+    }
+
+    .empty {
+      background: #fcfcfd;
+    }
+
+    /* Event */
+    .event {
+      position: relative;
+      width: 100%;
+      height: 76px;
+      border-radius: 13px;
+      padding: 13px 14px;
+      overflow: hidden;
+    }
+
+    .event.blue-event {
+      background: #edf2ff;
+      border: 1px solid #dce5ff;
+    }
+
+    .event.pink-event {
+      background: #fff0f4;
+      border: 1px solid #ffe0e8;
+    }
+
+    .event-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 7px;
+    }
+
+    .event-meta {
+      font-size: 11px;
+      color: #7e8492;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .event-location {
+      font-size: 11px;
+      color: #9297a4;
+      margin-top: 5px;
+    }
+
+    /* Parent movement */
+    .parent-cell {
+      padding: 0 14px;
+      background: #fafbfc;
+    }
+
+    .drive {
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .drive-line {
+      position: absolute;
+      left: 18px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #d8dce6;
+    }
+
+    .drive-node {
+      position: relative;
+      z-index: 2;
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid #e3e6ed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      box-shadow: 0 3px 10px rgba(32, 35, 43, 0.05);
+    }
+
+    .drive-content {
+      position: relative;
+      z-index: 2;
+      background: #fff;
+      border: 1px solid #e9ebf0;
+      border-radius: 12px;
+      padding: 9px 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .drive-title {
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .drive-time {
+      color: #858b99;
+      font-size: 11px;
+    }
+
+    .drive-tag {
+      display: inline-block;
+      margin-top: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #65708a;
+      background: #f2f4f8;
+      padding: 3px 7px;
+      border-radius: 6px;
+    }
+
+    /* Empty time */
+    .free-space {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      padding-left: 16px;
+    }
+
+    .free-label {
+      color: #c1c5ce;
+      font-size: 11px;
+      border: 1px dashed #dfe2e8;
+      border-radius: 8px;
+      padding: 5px 8px;
+    }
+
+    /* Bottom summary */
+    .bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .summary-card {
+      background: #fff;
+      border: 1px solid #e9eaf0;
+      border-radius: 18px;
+      padding: 18px 20px;
+    }
+
+    .summary-label {
+      color: #969ba8;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .summary-main {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .summary-sub {
+      color: #8c92a0;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #23815b;
+      background: #ecfaf3;
+      border-radius: 8px;
+      padding: 6px 9px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: #37b77a;
+      border-radius: 50%;
+    }
+
+    /* Current time */
+    .current-line {
+      position: absolute;
+      left: 90px;
+      right: 0;
+      top: 202px;
+      height: 2px;
+      background: #ff6b72;
+      z-index: 5;
+    }
+
+    .current-label {
+      position: absolute;
+      left: -52px;
+      top: -9px;
+      background: #ff6b72;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 7px;
+      border-radius: 6px;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .app {
+        padding: 22px 16px 35px;
+      }
+
+      .header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .schedule-card {
+        overflow-x: auto;
+      }
+
+      .schedule-head,
+      .time-row {
+        min-width: 900px;
+      }
+
+      .bottom {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- Header -->
+  <header class="header">
+    <div>
+      <div class="eyebrow">TODAY · FAMILY SCHEDULE</div>
+      <h1>오늘, 아이들을 위해 움직일 시간</h1>
+      <div class="date">8월 19일 수요일 · 오늘의 일정 6개</div>
+    </div>
+
+    <div class="family-summary">
+      <div class="child-chip">
+        <div class="avatar blue">첫</div>
+        첫째 · 민준
+      </div>
+
+      <div class="child-chip">
+        <div class="avatar pink">둘</div>
+        둘째 · 서윤
+      </div>
+    </div>
+  </header>
+
+
+  <!-- Integrated Schedule -->
+  <section class="schedule-card">
+
+    <!-- Column Header -->
+    <div class="schedule-head">
+
+      <div class="head-cell"></div>
+
+      <div class="head-cell">
+        <div class="head-title">
+          <span class="head-dot blue"></span>
+          첫째
+          <span class="head-sub">민준</span>
+        </div>
+      </div>
+
+      <div class="head-cell">
+        <div class="head-title">
+          <span class="head-dot pink"></span>
+          둘째
+          <span class="head-sub">서윤</span>
+        </div>
+      </div>
+
+      <div class="head-cell">
+        <div class="head-title">
+          🚗 부모 이동
+          <span class="head-sub">오늘의 이동 경로</span>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- Timeline -->
+    <div class="timeline">
+
+      <!-- Current Time -->
+      <div class="current-line">
+        <span class="current-label">지금</span>
+      </div>
+
+
+      <!-- 15:00 -->
+      <div class="time-row">
+
+        <div class="time">15:00</div>
+
+        <div class="cell">
+          <div class="event blue-event">
+            <div class="event-title">영어학원 준비</div>
+            <div class="event-meta">🏠 집에서 준비</div>
+          </div>
+        </div>
+
+        <div class="cell empty">
+          <div class="free-space">
+            <span class="free-label">빈 시간</span>
+          </div>
+        </div>
+
+        <div class="cell parent-cell"></div>
+
+      </div>
+
+
+      <!-- 15:30 -->
+      <div class="time-row">
+
+        <div class="time">15:30</div>
+
+        <div class="cell">
+          <div class="event blue-event">
+            <div class="event-title">영어학원</div>
+            <div class="event-meta">🕐 16:00 ~ 17:00</div>
+            <div class="event-location">📍 ABC 영어학원</div>
+          </div>
+        </div>
+
+        <div class="cell empty"></div>
+
+        <div class="cell parent-cell">
+          <div class="drive">
+            <div class="drive-line"></div>
+            <div class="drive-node">🏠</div>
+            <div class="drive-content">
+              <div class="drive-title">첫째 등원</div>
+              <div class="drive-time">15:30 집 출발 → 16:00 도착</div>
+              <span class="drive-tag">🚗 부모 이동 · 30분</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- 16:00 -->
+      <div class="time-row">
+
+        <div class="time">16:00</div>
+
+        <div class="cell">
+          <div class="event blue-event">
+            <div class="event-title">영어학원</div>
+            <div class="event-meta">수업 중 · 1시간</div>
+            <div class="event-location">📍 ABC 영어학원</div>
+          </div>
+        </div>
+
+        <div class="cell">
+          <div class="event pink-event">
+            <div class="event-title">태권도</div>
+            <div class="event-meta">🕐 16:00 ~ 17:30</div>
+            <div class="event-location">📍 힘찬 태권도장</div>
+          </div>
+        </div>
+
+        <div class="cell parent-cell"></div>
+
+      </div>
+
+
+      <!-- 17:00 -->
+      <div class="time-row">
+
+        <div class="time">17:00</div>
+
+        <div class="cell">
+          <div class="free-space">
+            <span class="free-label">17:00 ~ 빈 시간</span>
+          </div>
+        </div>
+
+        <div class="cell">
+          <div class="event pink-event">
+            <div class="event-title">태권도</div>
+            <div class="event-meta">수업 중 · 30분</div>
+          </div>
+        </div>
+
+        <div class="cell parent-cell">
+          <div class="drive">
+            <div class="drive-line"></div>
+            <div class="drive-node">👦</div>
+            <div class="drive-content">
+              <div class="drive-title">첫째 픽업</div>
+              <div class="drive-time">17:00 출발 → 17:20 픽업</div>
+              <span class="drive-tag">🚗 이동 20분</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- 17:30 -->
+      <div class="time-row">
+
+        <div class="time">17:30</div>
+
+        <div class="cell empty"></div>
+
+        <div class="cell">
+          <div class="event pink-event">
+            <div class="event-title">태권도 종료</div>
+            <div class="event-meta">🚌 학원 차량 하원</div>
+          </div>
+        </div>
+
+        <div class="cell parent-cell">
+          <div class="drive">
+            <div class="drive-line"></div>
+            <div class="drive-node">👧</div>
+            <div class="drive-content">
+              <div class="drive-title">둘째 학원 이동</div>
+              <div class="drive-time">17:20 출발 → 17:40 도착</div>
+              <span class="drive-tag">🟢 여유 10분</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- 18:00 -->
+      <div class="time-row">
+
+        <div class="time">18:00</div>
+
+        <div class="cell empty">
+          <div class="free-space">
+            <span class="free-label">18:00 ~ 빈 시간</span>
+          </div>
+        </div>
+
+        <div class="cell empty">
+          <div class="free-space">
+            <span class="free-label">다음 일정까지 빈 시간</span>
+          </div>
+        </div>
+
+        <div class="cell parent-cell">
+          <div class="drive">
+            <div class="drive-line"></div>
+            <div class="drive-node">🏠</div>
+            <div class="drive-content">
+              <div class="drive-title">귀가</div>
+              <div class="drive-time">18:00 집 도착 예정</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- Bottom Summary -->
+  <section class="bottom">
+
+    <div class="summary-card">
+      <div class="summary-label">오늘의 이동</div>
+      <div class="summary-main">🚗 부모 이동 3회</div>
+      <div class="summary-sub">총 예상 이동시간 1시간 10분</div>
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-label">일정 확인</div>
+      <div class="status">
+        <span class="status-dot"></span>
+        모든 픽업 일정 가능
+      </div>
+      <div class="summary-sub">일정 사이 이동시간에 여유가 있습니다.</div>
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-label">아이별 빈 시간</div>
+      <div class="summary-main">첫째 1시간 30분 · 둘째 30분</div>
+      <div class="summary-sub">새로운 일정을 넣을 수 있는 시간</div>
+    </div>
+
+  </section>
+
+</div>
+
+</body>
+</html>
