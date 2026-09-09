@@ -1,19 +1,9 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const app = document.getElementById("app");
-
-  app.innerHTML = `
-    <main class="app-shell">
-      ${renderHeader(scheduleData)}
-      ${renderScheduleCard(scheduleData)}
-      ${renderSummarySection(scheduleData.summary)}
-    </main>
-  `;
-
-  document.querySelector(".settings-button")?.addEventListener("click", function () {
-    alert("설정 화면은 다음 단계에서 연결할 수 있습니다.");
-  });
-
-  document.querySelector(".today-button")?.addEventListener("click", function () {
-    alert("오늘 일정이 표시되고 있습니다.");
-  });
-});
+const state={schedules:Storage.loadSchedules(),drives:Storage.loadDrives()};
+function render(){document.getElementById("app").innerHTML=`<main class="app-shell">${renderHeader()}<div class="main-card">${renderScheduleCard(state.schedules,state.drives)}${renderAlert(state.schedules)}${renderSummary(state.schedules)}</div><footer>● 일정은 이 브라우저에 자동 저장됩니다</footer></main>`;document.getElementById("headerDate").textContent=`${Calendar.label(Calendar.date)} · 오늘의 일정 ${state.schedules.length}개`;bind()}
+function bind(){document.getElementById("addSchedule").onclick=()=>open();document.querySelectorAll(".edit").forEach(b=>b.onclick=()=>open(state.schedules.find(x=>x.id===b.dataset.id)));document.querySelectorAll(".del").forEach(b=>b.onclick=()=>del(b.dataset.id));document.getElementById("prevDay").onclick=()=>{Calendar.move(-1);updateDate()};document.getElementById("nextDay").onclick=()=>{Calendar.move(1);updateDate()};document.getElementById("todayButton").onclick=()=>{Calendar.today();updateDate()};document.getElementById("resetData").onclick=()=>{if(confirm("기본 일정으로 초기화할까요?")){Storage.reset();state.schedules=Storage.loadSchedules();state.drives=Storage.loadDrives();render()}}}
+function updateDate(){document.getElementById("headerDate").textContent=`${Calendar.label(Calendar.date)} · 오늘의 일정 ${state.schedules.length}개`}
+function open(x=null){document.getElementById("modal")?.remove();document.body.insertAdjacentHTML("beforeend",modal(x||{}));document.getElementById("close").onclick=close;document.getElementById("cancel").onclick=close;document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")close()};document.querySelector(".modal").onsubmit=save}
+function close(){document.getElementById("modal")?.remove()}
+function save(e){e.preventDefault();let f=new FormData(e.target),x={id:f.get("id")||"s"+Date.now(),childId:f.get("childId"),title:f.get("title").trim(),start:f.get("start"),end:f.get("end"),place:f.get("place").trim()||"미정"};if(Conflict.min(x.end)<Conflict.min(x.start)){alert("종료 시간이 시작 시간보다 빠릅니다.");return}let same=state.schedules.some(s=>s.id!==x.id&&s.childId===x.childId&&Conflict.overlap(s,x));if(same&&!confirm("같은 아이의 일정과 시간이 겹칩니다. 저장할까요?"))return;let i=state.schedules.findIndex(s=>s.id===x.id);i>=0?state.schedules[i]=x:state.schedules.push(x);Storage.saveSchedules(state.schedules);close();render()}
+function del(id){let x=state.schedules.find(s=>s.id===id);if(x&&confirm(`"${x.title}" 일정을 삭제할까요?`)){state.schedules=state.schedules.filter(s=>s.id!==id);Storage.saveSchedules(state.schedules);render()}}
+document.addEventListener("DOMContentLoaded",render);

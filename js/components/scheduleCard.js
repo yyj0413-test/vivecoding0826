@@ -1,8 +1,1 @@
-window.renderScheduleCard = function (data) {
-  return `
-    <section class="schedule-card">
-      ${renderScheduleHeader()}
-      ${renderTimeline(data.rows)}
-    </section>
-  `;
-};
+window.renderScheduleCard=(s,d)=>`<section class="schedule-card">${renderScheduleHeader()}${renderTimeline(s,d)}<div class="add-area"><button id="addSchedule">＋ 일정 추가</button></div></section>`;
