@@ -1,1 +1,15 @@
-window.renderDrive=d=>!d?'<div class="empty"></div>':`<div class="drive-card"><b>🚗</b><div><strong>${d.title}</strong><small>${d.meta}</small></div><em>${d.duration}</em></div>`;
+const renderDrive = d =>
+  !d
+    ? '<div class="empty"></div>'
+    : `
+      <div class="drive-card">
+        <b>🚗</b>
+        <div>
+          <strong>${d.title}</strong>
+          <small>${d.meta}</small>
+        </div>
+        <em>${d.duration}</em>
+      </div>
+    `;
+
+export { renderDrive };

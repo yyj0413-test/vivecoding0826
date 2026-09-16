@@ -1,7 +1,10 @@
 family-schedule-vanilla/
 │
 ├── index.html
+├── package.json
+
 │
+
 ├── css/
 │   └── style.css
 │

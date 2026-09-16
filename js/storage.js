@@ -1,3 +1,4 @@
+import { defaultSchedules, defaultDrives } from "./data.js";
 window.Storage={
 loadSchedules(){try{return JSON.parse(localStorage.getItem("familySchedules"))||defaultSchedules.map(x=>({...x}))}catch(e){return defaultSchedules.map(x=>({...x}))}},
 saveSchedules(x){localStorage.setItem("familySchedules",JSON.stringify(x))},

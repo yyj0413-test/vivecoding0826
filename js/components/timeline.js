@@ -1,1 +1,28 @@
-window.renderTimeline=(s,d)=>{let ts=new Set(["15:00","15:30","16:00","16:30","17:00","17:30","18:00"]);s.forEach(x=>ts.add(x.start));d.forEach(x=>ts.add(x.start));return `<div class="timeline">${[...ts].sort((a,b)=>Conflict.min(a)-Conflict.min(b)).map(t=>renderRow(t,s,d)).join("")}</div>`};
+import { Conflict } from "../conflict.js";
+import { renderRow } from "./timeRow.js";
+
+const renderTimeline = (s, d) => {
+  let ts = new Set([
+    "15:00",
+    "15:30",
+    "16:00",
+    "16:30",
+    "17:00",
+    "17:30",
+    "18:00"
+  ]);
+
+  s.forEach(x => ts.add(x.start));
+  d.forEach(x => ts.add(x.start));
+
+  return `
+    <div class="timeline">
+      ${[...ts]
+        .sort((a, b) => Conflict.min(a) - Conflict.min(b))
+        .map(t => renderRow(t, s, d))
+        .join("")}
+    </div>
+  `;
+};
+
+export { renderTimeline };

@@ -1,3 +1,12 @@
+import { Storage } from "./storage.js";
+import { Calendar } from "./calendar.js";
+import { Conflict } from "./conflict.js";
+
+import { renderHeader } from "./components/header.js";
+import { renderScheduleCard } from "./components/scheduleCard.js";
+import { renderAlert } from "./components/alertCard.js";
+import { renderSummary } from "./components/summarySection.js";
+import { modal } from "./components/scheduleModal.js";
 const state={schedules:Storage.loadSchedules(),drives:Storage.loadDrives()};
 function render(){document.getElementById("app").innerHTML=`<main class="app-shell">${renderHeader()}<div class="main-card">${renderScheduleCard(state.schedules,state.drives)}${renderAlert(state.schedules)}${renderSummary(state.schedules)}</div><footer>● 일정은 이 브라우저에 자동 저장됩니다</footer></main>`;document.getElementById("headerDate").textContent=`${Calendar.label(Calendar.date)} · 오늘의 일정 ${state.schedules.length}개`;bind()}
 function bind(){document.getElementById("addSchedule").onclick=()=>open();document.querySelectorAll(".edit").forEach(b=>b.onclick=()=>open(state.schedules.find(x=>x.id===b.dataset.id)));document.querySelectorAll(".del").forEach(b=>b.onclick=()=>del(b.dataset.id));document.getElementById("prevDay").onclick=()=>{Calendar.move(-1);updateDate()};document.getElementById("nextDay").onclick=()=>{Calendar.move(1);updateDate()};document.getElementById("todayButton").onclick=()=>{Calendar.today();updateDate()};document.getElementById("resetData").onclick=()=>{if(confirm("기본 일정으로 초기화할까요?")){Storage.reset();state.schedules=Storage.loadSchedules();state.drives=Storage.loadDrives();render()}}}
