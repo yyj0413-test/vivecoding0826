@@ -2,9 +2,12 @@ family-schedule-vanilla/
 │
 ├── index.html
 ├── package.json
-
+├── vite.config.js
 │
-
+├── public/
+│   └── icons/
+│       ├── icon-192.png
+│       └── icon-512.png
 ├── css/
 │   └── style.css
 │
